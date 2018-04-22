@@ -1,0 +1,12 @@
+{
+  "name": "sless",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "sharp": "^0.20.1"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.226.1"
+  }
+}
