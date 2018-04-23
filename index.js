@@ -14,7 +14,9 @@ const ALLOWED_RESOLUTIONS = process.env.ALLOWED_RESOLUTIONS ?
 exports.handler = async function(event, context) {
   try {
     const key = event.queryStringParameters.key;
-    let [ text, dimension, width, height, originalKey ] = key.match(/((\d+)x(\d+))\/(.*)/);
+    const regex = /(.*?)\/((\d+)x(\d+))\/(.*)/;
+    let [ text, prefix, dimension, width, height, filename ] = key.match(regex);
+    const originalKey = `${prefix}/${filename}`;
     width = parseInt(width, 10);
     height = parseInt(height, 10);
 
@@ -29,7 +31,7 @@ exports.handler = async function(event, context) {
     }
 
     // read image's data
-    const data = await S3.getObject({Bucket: BUCKET, Key: originalKey}).promise();
+    const data = await S3.getObject({Bucket: BUCKET, Key: originalKey }).promise();
 
     // resize
     const buffer = await Sharp(data.Body)
