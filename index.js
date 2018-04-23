@@ -12,10 +12,13 @@ const ALLOWED_RESOLUTIONS = process.env.ALLOWED_RESOLUTIONS ?
   new Set(process.env.ALLOWED_RESOLUTIONS.split(/\s*,\s*/)) : new Set([]);
 
 exports.handler = async function(event, context) {
+  let matchText, prefix, dimension, width, height, filename;
   try {
+    // key: prefix/100x100/filename.jpg
     const key = event.queryStringParameters.key;
     const regex = /(.*?)\/((\d+)x(\d+))\/(.*)/;
-    let [ text, prefix, dimension, width, height, filename ] = key.match(regex);
+    // extract required data for resizing
+    [ matchText, prefix, dimension, width, height, filename ] = key.match(regex);
     const originalKey = `${prefix}/${filename}`;
     width = parseInt(width, 10);
     height = parseInt(height, 10);
@@ -30,8 +33,8 @@ exports.handler = async function(event, context) {
       };
     }
 
-    // read image's data
-    const data = await S3.getObject({Bucket: BUCKET, Key: originalKey }).promise();
+    // read orginal image's data
+    const data = await S3.getObject({ Bucket: BUCKET, Key: originalKey }).promise();
 
     // resize
     const buffer = await Sharp(data.Body)
@@ -54,10 +57,12 @@ exports.handler = async function(event, context) {
       body: '',
     };    
   } catch (error) {
+    width = width || 100;
+    height = height || 100;
     console.error(error);
     return {
       statusCode: '301',
-      headers: {'location': `http://via.placeholder.com/100x100?text=Not+found`},
+      headers: {'location': `http://via.placeholder.com/${width}x${height}?text=Not+found`},
       body: '',
     };
   }
