@@ -1,5 +1,5 @@
 {
-  "name": "lambda-image-resize",
+  "name": "lambda-resize-image",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
