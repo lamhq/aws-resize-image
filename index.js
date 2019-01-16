@@ -4,12 +4,11 @@ const AWS = require('aws-sdk');
 const Sharp = require('sharp');
 
 const S3 = new AWS.S3({ signatureVersion: 'v4' });
-const { BUCKET, URL } = process.env.BUCKET;
+const { BUCKET, URL } = process.env;
 const ALLOWED_RESOLUTIONS = process.env.ALLOWED_RESOLUTIONS ?
   new Set(process.env.ALLOWED_RESOLUTIONS.split(/\s*,\s*/)) : new Set([]);
 
 async function resize(stream, width, height) {
-  console.log(stream);
   const img = Sharp(stream);
   const { width: orgWidth, height: orgHeight } = await img.metadata();
   let w;
